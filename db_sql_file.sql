@@ -375,3 +375,40 @@ This query will display the current inventory level for each product.
 SELECT p.product_name, i.inventory_quantity
 FROM product p
 JOIN inventory i ON p.product_id = i.product_id;
+
+/*
+4. Identify the top-selling products:
+
+This query leverages the number of orders for each product as an indicator of popularity.
+*/
+SELECT p.product_name, COUNT(o.order_id) AS total_orders
+FROM product p
+JOIN orders oi ON p.product_id = oi.product_id
+JOIN orders o ON oi.order_id = o.order_id
+GROUP BY p.product_name
+ORDER BY total_orders DESC;
+
+/*
+5. Calculate the total revenue generated each month.
+*/
+SELECT
+    DATE_FORMAT(o.order_date, '%Y-%m') AS month,
+    SUM(o.order_total_amount) AS total_revenue
+FROM orders o
+GROUP BY month
+ORDER BY month;
+
+
+/*
+6. Analyze product profitability.
+
+SELECT
+    p.product_name,
+    SUM(o.order_total_amount) AS total_revenue,
+    SUM(i.purchase_cost * o.order_quantity) AS total_cost,
+    (SUM(o.order_total_amount) - SUM(i.purchase_cost * o.order_quantity)) / SUM(o.order_total_amount) * 100 AS profit_margin
+FROM product p
+JOIN inventory i ON p.product_id = i.product_id
+JOIN orders o ON p.product_id = o.product_id
+GROUP BY p.product_name;
+*/
